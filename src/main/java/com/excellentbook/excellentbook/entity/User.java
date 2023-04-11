@@ -15,8 +15,8 @@ import java.util.Set;
 public class User extends BaseEntity{
 
     private String firstName;
-
     private String lastName;
+    @Column(unique = true)
     private String email;
     private String password;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,

@@ -1,13 +1,10 @@
 package com.excellentbook.excellentbook.controller;
 
-import com.excellentbook.excellentbook.dto.auth.SignUpDto;
+import com.excellentbook.excellentbook.dto.auth.SignUpDtoRequest;
+import com.excellentbook.excellentbook.dto.auth.SignUpDtoResponse;
 import com.excellentbook.excellentbook.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -19,12 +16,11 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public SignUpDtoResponse registerUser(@RequestBody SignUpDtoRequest signUpDto) {
 
-        userService.createUser(signUpDto);
-
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-
+        return userService.createUser(signUpDto);
     }
+
 
 }

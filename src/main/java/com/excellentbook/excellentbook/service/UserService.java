@@ -1,8 +1,9 @@
 package com.excellentbook.excellentbook.service;
 
-import com.excellentbook.excellentbook.dto.auth.SignUpDto;
+import com.excellentbook.excellentbook.dto.auth.SignUpDtoRequest;
+import com.excellentbook.excellentbook.dto.auth.SignUpDtoResponse;
 
 public interface UserService {
-    void createUser(SignUpDto signUpDto);
+    SignUpDtoResponse createUser(SignUpDtoRequest signUpDto);
 
 }

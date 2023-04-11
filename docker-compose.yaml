@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  jdbc-mysql:
+    image: mysql:latest
+    container_name: excellent-book-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: excellent-book
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    ports:
+      - 3306:3306

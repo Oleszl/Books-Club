@@ -1,9 +1,7 @@
 package com.excellentbook.excellentbook.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
@@ -12,14 +10,16 @@ import java.util.Set;
 @AllArgsConstructor
 @Table
 @Entity
-public class User extends BaseEntity{
+@EqualsAndHashCode(exclude = {"roles", "books"}, callSuper = true)
+public class User extends BaseEntity  {
 
     private String firstName;
     private String lastName;
     @Column(unique = true)
     private String email;
     private String password;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    private String phoneNumber;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -29,4 +29,9 @@ public class User extends BaseEntity{
 
     private Boolean active;
 
+    @ManyToMany(fetch = FetchType.LAZY,
+            mappedBy = "users")
+    private Set<Book> books;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Address address;
 }

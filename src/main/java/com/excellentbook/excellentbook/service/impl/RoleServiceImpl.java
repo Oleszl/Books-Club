@@ -21,14 +21,14 @@ public class RoleServiceImpl implements RoleService {
 
         List<Role> roles = roleRepository.findAll();
 
-        if (roles.isEmpty()) {
-            Role adminRole = new Role();
-            adminRole.setName("ROLE_ADMIN");
-            roleRepository.save(adminRole);
-
-            Role userRole = new Role();
-            userRole.setName("ROLE_USER");
-            roleRepository.save(userRole);
-        }
+//        if (roles.isEmpty()) {
+//            Role adminRole = new Role();
+//            adminRole.setName("ROLE_ADMIN");
+//            roleRepository.save(adminRole);
+//
+//            Role userRole = new Role();
+//            userRole.setName("ROLE_USER");
+//            roleRepository.save(userRole);
+//        }
     }
 }

@@ -1,5 +1,6 @@
 package com.excellentbook.excellentbook.dto.user;
 
+import com.excellentbook.excellentbook.dto.address.AddressDto;
 import com.excellentbook.excellentbook.entity.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -14,6 +15,6 @@ public class UserDtoRequest {
     private String password;
     @JsonProperty("phone_number")
     private String phoneNumber;
-    private Address address;
+    private AddressDto address;
 
 }

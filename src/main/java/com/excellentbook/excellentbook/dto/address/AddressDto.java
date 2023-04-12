@@ -13,6 +13,6 @@ public class AddressDto {
     private String region;
 
     private String street;
-
+    @JsonProperty("zip_code")
     private String zipCode;
 }

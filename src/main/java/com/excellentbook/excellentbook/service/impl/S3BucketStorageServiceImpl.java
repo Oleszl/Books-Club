@@ -4,6 +4,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.excellentbook.excellentbook.service.S3BucketStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,13 +15,14 @@ import java.io.IOException;
 
 @Service
 @Slf4j
-public class S3BucketStorageService {
+public class S3BucketStorageServiceImpl implements S3BucketStorageService {
     @Autowired
     private AmazonS3 amazonS3Client;
 
     @Value("${application.bucket.name}")
     private String bucketName;
 
+    @Override
     public void uploadFile(String path, MultipartFile file) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();

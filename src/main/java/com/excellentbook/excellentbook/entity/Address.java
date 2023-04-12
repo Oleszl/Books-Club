@@ -16,12 +16,8 @@ import lombok.NoArgsConstructor;
 public class Address extends BaseEntity {
 
     private String buildNumber;
-
     private String city;
-
     private String region;
-
     private String street;
-
     private String zipCode;
 }

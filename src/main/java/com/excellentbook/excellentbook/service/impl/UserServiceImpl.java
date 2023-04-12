@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper mapper;
 
-    private final S3BucketStorageService s3BucketStorageService;
+    private final S3BucketStorageServiceImpl s3BucketStorageService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
                            ModelMapper modelMapper, PasswordEncoder passwordEncoder,
-                           S3BucketStorageService s3BucketStorageService) {
+                           S3BucketStorageServiceImpl s3BucketStorageService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.mapper = modelMapper;
@@ -86,9 +86,15 @@ public class UserServiceImpl implements UserService {
     public UserDtoResponse updateUserById(Long id, UserDtoRequest userDtoRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
         user.setFirstName(userDtoRequest.getFirstName());
         user.setLastName(userDtoRequest.getLastName());
         user.setEmail(userDtoRequest.getEmail());
+        user.setPhoneNumber(userDtoRequest.getPhoneNumber());
+
+        Address address = mapper.map(userDtoRequest.getAddress(), Address.class);
+        user.setAddress(address);
+
         if (userDtoRequest.getPassword() != null)
             user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
 

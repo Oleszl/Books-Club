@@ -38,8 +38,6 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/users/**").hasAuthority("USER")
                 .requestMatchers(HttpMethod.DELETE,"/api/v1/users/**").hasAuthority("ADMIN")
                 .anyRequest().permitAll();
 

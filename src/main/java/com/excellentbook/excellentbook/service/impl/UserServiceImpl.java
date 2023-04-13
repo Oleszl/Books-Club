@@ -118,7 +118,7 @@ public class UserServiceImpl implements UserService {
         }
 
         String path = String.format("%s/%s", "user-avatars", UUID.randomUUID());
-//        s3BucketStorageService.uploadFile(path, file);
+        s3BucketStorageService.uploadFile(path, file);
         String fullPath = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, s3RegionName, path);
         user.setPhotoUrl(fullPath);
         return mapper.map(userRepository.save(user), UserDtoResponse.class);

@@ -6,6 +6,7 @@ import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
 import com.excellentbook.excellentbook.security.jwt.JwtTokenProvider;
 import com.excellentbook.excellentbook.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,12 +35,12 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public RegisterUserDtoResponse registerUser(@RequestBody RegisterUserDtoRequest registerUserDtoRequest) {
+    public RegisterUserDtoResponse registerUser(@Valid @RequestBody RegisterUserDtoRequest registerUserDtoRequest) {
         return userService.createUser(registerUserDtoRequest);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<JwtAuthResponse> authenticate(@RequestBody LoginDto loginDto)
+    public ResponseEntity<JwtAuthResponse> authenticate(@Valid @RequestBody LoginDto loginDto)
     {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(),

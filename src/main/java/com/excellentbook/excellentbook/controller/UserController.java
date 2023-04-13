@@ -3,6 +3,7 @@ package com.excellentbook.excellentbook.controller;
 import com.excellentbook.excellentbook.dto.user.UserDtoRequest;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserDtoResponse updateUser(@PathVariable Long id, @RequestBody UserDtoRequest userDtoRequest) {
+    public UserDtoResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserDtoRequest userDtoRequest) {
         return userService.updateUserById(id, userDtoRequest);
     }
 

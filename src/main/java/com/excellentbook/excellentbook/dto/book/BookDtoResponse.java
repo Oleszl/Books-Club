@@ -15,7 +15,8 @@ public class BookDtoResponse {
     private Author author;
     private Category category;
     private String photoUrl;
-    private String status;
+    private String status; //active
     private Set<Tag> tags;
+    private User owner;
     private Set<User> users;
 }

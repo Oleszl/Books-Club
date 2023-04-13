@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "roles")
+@Table()
 @Entity
 public class Role extends BaseEntity{
     @Column(length = 25, unique = true)

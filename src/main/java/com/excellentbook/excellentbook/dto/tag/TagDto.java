@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import java.util.Set;
 
 public class TagDto {
-    private Long id;
     private String name;
     private Set<Book> books;
 }

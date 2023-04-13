@@ -1,7 +1,6 @@
 package com.excellentbook.excellentbook.dto.category;
 
 import com.excellentbook.excellentbook.entity.Book;
-import jakarta.validation.Valid;
 
 import java.util.Set;
 

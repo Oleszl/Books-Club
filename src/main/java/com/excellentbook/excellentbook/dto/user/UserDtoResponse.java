@@ -1,7 +1,6 @@
 package com.excellentbook.excellentbook.dto.user;
 
 import com.excellentbook.excellentbook.dto.address.AddressDto;
-import com.excellentbook.excellentbook.entity.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 

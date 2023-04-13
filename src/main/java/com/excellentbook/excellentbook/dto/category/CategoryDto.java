@@ -1,11 +1,9 @@
 package com.excellentbook.excellentbook.dto.category;
 
-import com.excellentbook.excellentbook.entity.Book;
+import lombok.Data;
 
-import java.util.Set;
-
+@Data
 public class CategoryDto {
     private Long id;
     private String name;
-    private Set<Book> books;
 }

@@ -1,11 +1,8 @@
 package com.excellentbook.excellentbook.dto.book;
 
-import com.excellentbook.excellentbook.entity.Tag;
-import com.excellentbook.excellentbook.entity.User;
+import com.excellentbook.excellentbook.dto.tag.TagIdDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.Set;
@@ -17,14 +14,13 @@ public class BookDtoRequest {
     @NotBlank
     private String description;
     @JsonProperty("author_id")
-    private String authorId;
+    private Long authorId;
     @JsonProperty("category_id")
-    private String categoryId;
-//    private String photoUrl;
-    private Set<Tag> tags;
+    private Long categoryId;
+    private Set<TagIdDto> tags;
     @JsonProperty("user_id")
-    private User userId;
-    @Valid
-    @NotEmpty
-    private Set<User> users;
+    private Long userId;
+//    @Valid
+//    @NotEmpty
+//    private Set<User> users;
 }

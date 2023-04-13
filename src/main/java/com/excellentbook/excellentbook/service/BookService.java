@@ -1,11 +1,20 @@
 package com.excellentbook.excellentbook.service;
 
+import com.excellentbook.excellentbook.dto.book.BookDtoRequest;
 import com.excellentbook.excellentbook.dto.book.BookDtoResponse;
+import com.excellentbook.excellentbook.dto.book.BookPageableDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface BookService {
-    BookDtoResponse getAllBooks(int pageNumber, int pageSize, String sortBy, String sortDir);
-    BookDtoResponse getBookById();
-    BookDtoResponse saveBook();
-    BookDtoResponse updateBookById(Long id);
-    BookDtoResponse deleteBookById(Long id);
+    BookPageableDto getAllBooks(int pageNumber, int pageSize);
+
+    BookDtoResponse getBookById(Long id);
+
+    BookDtoResponse saveBook(BookDtoRequest bookDtoRequest);
+
+    BookDtoResponse updateBookById(Long id,BookDtoRequest bookDtoRequest);
+
+    void deleteBookById(Long id);
+
+    BookDtoResponse addBookImage(Long id, MultipartFile file);
 }

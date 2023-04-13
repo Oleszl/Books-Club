@@ -1,21 +1,25 @@
 package com.excellentbook.excellentbook.dto.book;
 
-import com.excellentbook.excellentbook.entity.Author;
-import com.excellentbook.excellentbook.entity.Category;
-import com.excellentbook.excellentbook.entity.Tag;
-import com.excellentbook.excellentbook.entity.User;
+import com.excellentbook.excellentbook.dto.author.AuthorDto;
+import com.excellentbook.excellentbook.dto.category.CategoryDto;
+import com.excellentbook.excellentbook.dto.tag.TagDto;
+import com.excellentbook.excellentbook.dto.user.UserDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.util.Set;
 
+@Data
 public class BookDtoResponse {
     private Long id;
     private String name;
     private String description;
-    private Author author;
-    private Category category;
+    private AuthorDto author;
+    private CategoryDto category;
+    @JsonProperty("photo_url")
     private String photoUrl;
     private String status; //active
-    private Set<Tag> tags;
-    private User owner;
-    private Set<User> users;
+    private Set<TagDto> tags;
+    private UserDto owner;
+//    private Set<User> users;
 }

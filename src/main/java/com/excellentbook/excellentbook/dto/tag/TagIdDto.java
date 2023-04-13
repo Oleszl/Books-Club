@@ -3,7 +3,6 @@ package com.excellentbook.excellentbook.dto.tag;
 import lombok.Data;
 
 @Data
-public class TagDto {
+public class TagIdDto {
     private Long id;
-    private String name;
 }

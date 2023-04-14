@@ -66,12 +66,16 @@ public class BookServiceImpl implements BookService {
         BookPageableDto bookPageableDto = new BookPageableDto();
 
         if (books.getNumber() == 0) {
-            int bookNumber = books.getNumber() + 1;
             bookPageableDto.setPrev(null);
-            bookPageableDto.setNext(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
-                    .queryParam(queryPageNumber, bookNumber)
-                    .queryParam(queryPageSize, pageSize)
-                    .toUriString());
+            if (books.getTotalElements() > pageSize) {
+                int bookNumber = books.getNumber() + 1;
+                bookPageableDto.setNext(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
+                        .queryParam(queryPageNumber, bookNumber)
+                        .queryParam(queryPageSize, pageSize)
+                        .toUriString());
+            }else{
+                bookPageableDto.setNext(null);
+            }
         } else if (books.isLast()) {
             int bookNumber = books.getNumber() - 1;
             bookPageableDto.setPrev(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)

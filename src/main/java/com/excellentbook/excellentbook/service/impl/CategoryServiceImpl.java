@@ -1,10 +1,13 @@
 package com.excellentbook.excellentbook.service.impl;
 
 import com.excellentbook.excellentbook.dto.category.CategoryDto;
+import com.excellentbook.excellentbook.entity.Category;
 import com.excellentbook.excellentbook.repository.CategoryRepository;
 import com.excellentbook.excellentbook.service.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -18,12 +21,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getAllCategory() {
-        return null;
+    public List<CategoryDto> getAllCategory() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(category -> mapper.map(category, CategoryDto.class))
+                .toList();
     }
 
-    @Override
-    public CategoryDto getCategoryById() {
-        return null;
-    }
 }

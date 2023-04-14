@@ -5,9 +5,12 @@ import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
 import com.excellentbook.excellentbook.dto.user.UserDtoRequest;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.entity.Address;
+import com.excellentbook.excellentbook.entity.Book;
 import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
+import com.excellentbook.excellentbook.enums.BookStatus;
 import com.excellentbook.excellentbook.exception.*;
+import com.excellentbook.excellentbook.repository.BookRepository;
 import com.excellentbook.excellentbook.repository.RoleRepository;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.UserService;
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
+    private final BookRepository bookRepository;
 
     private final ModelMapper mapper;
 
@@ -44,10 +48,11 @@ public class UserServiceImpl implements UserService {
     private String s3RegionName;
 
     public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           ModelMapper modelMapper, PasswordEncoder passwordEncoder,
-                           S3BucketStorageServiceImpl s3BucketStorageService) {
+                           BookRepository bookRepository, ModelMapper modelMapper,
+                           PasswordEncoder passwordEncoder, S3BucketStorageServiceImpl s3BucketStorageService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.bookRepository = bookRepository;
         this.mapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.s3BucketStorageService = s3BucketStorageService;
@@ -133,4 +138,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.deleteById(id);
     }
+
+
 }

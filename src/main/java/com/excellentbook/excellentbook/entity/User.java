@@ -19,7 +19,7 @@ public class User extends BaseEntity  {
     private String email;
     private String password;
     private String phoneNumber;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -30,8 +30,9 @@ public class User extends BaseEntity  {
     private Boolean active;
 
     @ManyToMany(fetch = FetchType.LAZY,
-            mappedBy = "users")
-    private Set<Book> books;
+            mappedBy = "buyers")
+    private Set<Book> desiredBooks;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Address address;
+
 }

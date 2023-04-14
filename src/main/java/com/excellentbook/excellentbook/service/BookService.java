@@ -17,4 +17,5 @@ public interface BookService {
     void deleteBookById(Long id);
 
     BookDtoResponse addBookImage(Long id, MultipartFile file);
+    BookDtoResponse addBookToUser(Long userId, Long bookId);
 }

@@ -9,7 +9,9 @@ import com.excellentbook.excellentbook.entity.Category;
 import com.excellentbook.excellentbook.entity.Tag;
 import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.enums.BookStatus;
+import com.excellentbook.excellentbook.exception.InvalidBuyerException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
+import com.excellentbook.excellentbook.exception.UnavailableBookException;
 import com.excellentbook.excellentbook.repository.BookRepository;
 import com.excellentbook.excellentbook.repository.CategoryRepository;
 import com.excellentbook.excellentbook.repository.TagRepository;
@@ -73,7 +75,7 @@ public class BookServiceImpl implements BookService {
                         .queryParam(queryPageNumber, bookNumber)
                         .queryParam(queryPageSize, pageSize)
                         .toUriString());
-            }else{
+            } else {
                 bookPageableDto.setNext(null);
             }
         } else if (books.isLast()) {
@@ -169,5 +171,24 @@ public class BookServiceImpl implements BookService {
         String fullPath = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, s3RegionName, path);
         book.setPhotoUrl(fullPath);
         return mapper.map(bookRepository.save(book), BookDtoResponse.class);
+    }
+
+    @Override
+    public BookDtoResponse addBookToUser(Long userId, Long bookId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", bookId));
+        if (!(book.getStatus().equals(BookStatus.AVAILABLE.name().toLowerCase()))) {
+            throw new UnavailableBookException(bookId);
+        } else {
+            if (book.getOwner().getId().equals(userId)){
+                throw new InvalidBuyerException("Buyer cannot claim its own book");
+            }
+            book.getBuyers().add(user);
+            bookRepository.save(book);
+        }
+        return mapper.map(book, BookDtoResponse.class);
     }
 }

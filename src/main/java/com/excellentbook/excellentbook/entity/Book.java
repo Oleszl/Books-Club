@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table
 @Entity
-@EqualsAndHashCode(exclude = {"tags", "author", "category", "users"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"tags", "category", "buyers"}, callSuper = true)
 public class Book extends BaseEntity {
     private String name;
     @Column(columnDefinition="LONGTEXT")
@@ -43,5 +43,6 @@ public class Book extends BaseEntity {
             name = "books_users",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users;
+    private Set<User> buyers;
+
 }

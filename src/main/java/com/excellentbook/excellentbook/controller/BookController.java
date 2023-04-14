@@ -4,6 +4,7 @@ import com.excellentbook.excellentbook.constant.AppConstants;
 import com.excellentbook.excellentbook.dto.book.BookDtoRequest;
 import com.excellentbook.excellentbook.dto.book.BookDtoResponse;
 import com.excellentbook.excellentbook.dto.book.BookPageableDto;
+import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -48,5 +49,10 @@ public class BookController {
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize) {
 
         return bookService.getAllBooks(pageNumber, pageSize);
+    }
+
+    @PostMapping("/{bookId}/users/{userId}")
+    public BookDtoResponse addBookToUser(@PathVariable Long bookId, @PathVariable Long userId) {
+        return bookService.addBookToUser(userId, bookId);
     }
 }

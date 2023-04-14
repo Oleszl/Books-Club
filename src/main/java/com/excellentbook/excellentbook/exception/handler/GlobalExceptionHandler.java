@@ -2,6 +2,7 @@ package com.excellentbook.excellentbook.exception.handler;
 
 import com.excellentbook.excellentbook.exception.EmailExistException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
+import com.excellentbook.excellentbook.exception.RoleNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,15 +26,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleRoleNotFoundException(RoleNotFoundException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(EmailExistException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(EmailExistException exception) {
+    public ResponseEntity<ErrorDetails> handleEmailExistException(EmailExistException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(UsernameNotFoundException exception) {
+    public ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UsernameNotFoundException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @Override

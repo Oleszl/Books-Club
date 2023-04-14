@@ -16,6 +16,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"tags", "author", "category", "users"}, callSuper = true)
 public class Book extends BaseEntity {
     private String name;
+    @Column(columnDefinition="LONGTEXT")
     private String description;
     private String authorName;
     @ManyToOne(fetch = FetchType.LAZY)

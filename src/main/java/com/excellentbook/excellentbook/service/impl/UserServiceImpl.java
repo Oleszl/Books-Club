@@ -9,6 +9,7 @@ import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.exception.EmailExistException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
+import com.excellentbook.excellentbook.exception.RoleNotFoundException;
 import com.excellentbook.excellentbook.repository.RoleRepository;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.UserService;
@@ -69,7 +70,8 @@ public class UserServiceImpl implements UserService {
         Address address = mapper.map(signUpDto.getAddress(), Address.class);
         user.setAddress(address);
 
-        Role roles = roleRepository.findByName("USER").get();
+        Role roles = roleRepository.findRoleByName("USER")
+                .orElseThrow(()-> new RoleNotFoundException("USER"));
         user.setRoles(Collections.singleton(roles));
 
         return mapper.map(userRepository.save(user), RegisterUserDtoResponse.class);

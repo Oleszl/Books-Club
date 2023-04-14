@@ -28,3 +28,4 @@ cloud:
 app:
   jwt-secret: JWTSecretKey
   jwt-expiration-milliseconds: 604800000
+  base-path: /api/v1

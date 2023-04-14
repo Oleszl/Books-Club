@@ -13,13 +13,13 @@ public class BookDtoRequest {
     private String name;
     @NotBlank
     private String description;
-    @JsonProperty("author_id")
-    private Long authorId;
+    @JsonProperty("author_name")
+    private String authorName;
     @JsonProperty("category_id")
     private Long categoryId;
     private Set<TagIdDto> tags;
-    @JsonProperty("user_id")
-    private Long userId;
+    @JsonProperty("owner_id")
+    private Long ownerId;
 //    @Valid
 //    @NotEmpty
 //    private Set<User> users;

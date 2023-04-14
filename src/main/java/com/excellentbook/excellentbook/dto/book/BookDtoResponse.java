@@ -1,6 +1,5 @@
 package com.excellentbook.excellentbook.dto.book;
 
-import com.excellentbook.excellentbook.dto.author.AuthorDto;
 import com.excellentbook.excellentbook.dto.category.CategoryDto;
 import com.excellentbook.excellentbook.dto.tag.TagDto;
 import com.excellentbook.excellentbook.dto.user.UserDto;
@@ -14,7 +13,8 @@ public class BookDtoResponse {
     private Long id;
     private String name;
     private String description;
-    private AuthorDto author;
+    @JsonProperty("author_name")
+    private String authorName;
     private CategoryDto category;
     @JsonProperty("photo_url")
     private String photoUrl;

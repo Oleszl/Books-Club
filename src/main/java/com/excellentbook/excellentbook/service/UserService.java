@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
     RegisterUserDtoResponse createUser(RegisterUserDtoRequest signUpDto);
 
-    UserDtoResponse getUserById(Long id);
+    UserDtoResponse getUser();
 
     UserDtoResponse updateUserById(Long id, UserDtoRequest userDtoRequest);
     UserDtoResponse updateUserPhoto(Long id, MultipartFile multipartFile);

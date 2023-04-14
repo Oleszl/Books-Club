@@ -3,11 +3,11 @@ package com.excellentbook.excellentbook.exception.handler;
 import com.excellentbook.excellentbook.exception.EmailExistException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
 import com.excellentbook.excellentbook.exception.RoleNotFoundException;
+import com.excellentbook.excellentbook.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,21 +26,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleRoleNotFoundException(RoleNotFoundException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<ErrorDetails> handleEmailExistException(EmailExistException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UsernameNotFoundException exception) {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleUsernameNotFoundException(UserNotFoundException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -50,6 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);    }
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 
 }

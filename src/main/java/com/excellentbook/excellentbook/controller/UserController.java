@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -18,9 +20,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public UserDtoResponse getUser(@PathVariable Long id) {
-        return userService.getUserById(id);
+    @GetMapping
+    public UserDtoResponse getUser() {
+        return userService.getUser();
     }
 
     @PutMapping("/{id}")

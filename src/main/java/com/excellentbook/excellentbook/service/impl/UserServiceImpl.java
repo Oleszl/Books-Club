@@ -10,15 +10,18 @@ import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.exception.EmailExistException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
 import com.excellentbook.excellentbook.exception.RoleNotFoundException;
+import com.excellentbook.excellentbook.exception.UserNotFoundException;
 import com.excellentbook.excellentbook.repository.RoleRepository;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
@@ -78,9 +81,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDtoResponse getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    public UserDtoResponse getUser() {
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new UserNotFoundException("User", "email", principal.getName()));
         return mapper.map(user, UserDtoResponse.class);
     }
 

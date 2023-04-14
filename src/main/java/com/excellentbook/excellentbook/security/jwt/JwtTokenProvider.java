@@ -1,5 +1,6 @@
 package com.excellentbook.excellentbook.security.jwt;
 
+import com.excellentbook.excellentbook.exception.InvalidJWTTokenException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -17,7 +18,6 @@ public class JwtTokenProvider {
     @Value(value = "${app.jwt-expiration-milliseconds}")
     private int jwtExpirationInMs;
 
-    //generate token
     public String generateToken(Authentication authentication) {
 
         String username = authentication.getName();
@@ -41,22 +41,13 @@ public class JwtTokenProvider {
 
         return claims.getSubject();
     }
-
-    // validate JWT token
-
         public boolean validateToken (String token){
 
             try {
                 Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
                 return true;
-            } catch (MalformedJwtException ex) {
-                throw new RuntimeException("Invalid JWT signature");
-            } catch (ExpiredJwtException ex) {
-                throw new RuntimeException("Invalid JWT signature");
-            } catch (UnsupportedJwtException ex) {
-                throw new RuntimeException("Invalid JWT signature");
-            } catch (IllegalArgumentException ex) {
-                throw new RuntimeException("Invalid JWT signature");
+            } catch (JwtException | IllegalArgumentException ex)  {
+                throw new InvalidJWTTokenException("Invalid JWT signature provided");
             }
         }
     }

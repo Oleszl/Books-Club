@@ -1,9 +1,9 @@
 package com.excellentbook.excellentbook.service.impl;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.excellentbook.excellentbook.exception.AmazonS3UploadException;
 import com.excellentbook.excellentbook.service.S3BucketStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +29,9 @@ public class S3BucketStorageServiceImpl implements S3BucketStorageService {
             metadata.setContentType("image/png");
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucketName, path, file.getInputStream(), metadata);
-        } catch (IOException ioe) {
-            log.error("IOException: {}", ioe.getMessage());
-        } catch (AmazonServiceException serviceException) {
-            log.info("AmazonServiceException: {}", serviceException.getMessage());
-            throw serviceException;
-        } catch (AmazonClientException clientException) {
-            log.info("AmazonClientException Message: {}", clientException.getMessage());
-            throw clientException;
+        } catch (AmazonServiceException | IOException e) {
+            log.error("Failed to upload the file: {}", e.getMessage());
+            throw new AmazonS3UploadException("Failed to upload the file");
         }
     }
 

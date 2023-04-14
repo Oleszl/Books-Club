@@ -1,9 +1,6 @@
 package com.excellentbook.excellentbook.exception.handler;
 
-import com.excellentbook.excellentbook.exception.EmailExistException;
-import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
-import com.excellentbook.excellentbook.exception.RoleNotFoundException;
-import com.excellentbook.excellentbook.exception.UserNotFoundException;
+import com.excellentbook.excellentbook.exception.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -45,6 +42,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvalidImageException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidImageException(InvalidImageException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AmazonS3UploadException.class)
+    public ResponseEntity<ErrorDetails> handleAWSGenericException(AmazonS3UploadException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

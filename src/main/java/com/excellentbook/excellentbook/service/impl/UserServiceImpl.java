@@ -7,10 +7,7 @@ import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.entity.Address;
 import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
-import com.excellentbook.excellentbook.exception.EmailExistException;
-import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
-import com.excellentbook.excellentbook.exception.RoleNotFoundException;
-import com.excellentbook.excellentbook.exception.UserNotFoundException;
+import com.excellentbook.excellentbook.exception.*;
 import com.excellentbook.excellentbook.repository.RoleRepository;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.UserService;
@@ -74,7 +71,7 @@ public class UserServiceImpl implements UserService {
         user.setAddress(address);
 
         Role roles = roleRepository.findRoleByName("USER")
-                .orElseThrow(()-> new RoleNotFoundException("USER"));
+                .orElseThrow(() -> new RoleNotFoundException("USER"));
         user.setRoles(Collections.singleton(roles));
 
         return mapper.map(userRepository.save(user), RegisterUserDtoResponse.class);
@@ -113,14 +110,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         if (file.isEmpty()) {
-            throw new IllegalStateException("Cannot upload empty file");
+            throw new InvalidImageException("Image is not provided");
         }
 
         if (!Arrays.asList(IMAGE_PNG.getMimeType(),
                 IMAGE_BMP.getMimeType(),
                 IMAGE_GIF.getMimeType(),
                 IMAGE_JPEG.getMimeType()).contains(file.getContentType())) {
-            throw new IllegalStateException("FIle uploaded is not an image");
+            throw new InvalidImageException("File uploaded is not an image");
         }
 
         String path = String.format("%s/%s", "user-avatars", UUID.randomUUID());

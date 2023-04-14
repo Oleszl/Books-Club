@@ -4,10 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class EmailExistException extends RuntimeException {
+public class AmazonS3UploadException extends RuntimeException {
 
-    public EmailExistException(String emailValue) {
-        super(String.format("Email: '%s' already exists in the system", emailValue));
+    public AmazonS3UploadException(String message) {
+        super(message);
     }
-
 }

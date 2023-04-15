@@ -1,14 +1,13 @@
 package com.excellentbook.excellentbook.service.impl;
 
+import com.excellentbook.excellentbook.dto.address.AddressDto;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
-import com.excellentbook.excellentbook.dto.user.UserDtoRequest;
+import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.entity.Address;
-import com.excellentbook.excellentbook.entity.Book;
 import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
-import com.excellentbook.excellentbook.enums.BookStatus;
 import com.excellentbook.excellentbook.exception.*;
 import com.excellentbook.excellentbook.repository.BookRepository;
 import com.excellentbook.excellentbook.repository.RoleRepository;
@@ -91,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDtoResponse updateUserById(Long id, UserDtoRequest userDtoRequest) {
+    public UserDtoResponse updateUserById(Long id, UserDetailsDto userDtoRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
@@ -99,9 +98,6 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userDtoRequest.getLastName());
         user.setEmail(userDtoRequest.getEmail());
         user.setPhoneNumber(userDtoRequest.getPhoneNumber());
-
-        Address address = mapper.map(userDtoRequest.getAddress(), Address.class);
-        user.setAddress(address);
 
         if (userDtoRequest.getPassword() != null)
             user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
@@ -130,6 +126,16 @@ public class UserServiceImpl implements UserService {
         String fullPath = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, s3RegionName, path);
         user.setPhotoUrl(fullPath);
         return mapper.map(userRepository.save(user), UserDtoResponse.class);
+    }
+
+    @Override
+    public UserDtoResponse updateUserAddress(Long id, AddressDto addressDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        Address address = mapper.map(addressDto, Address.class);
+        user.setAddress(address);
+        return mapper.map(user, UserDtoResponse.class);
     }
 
     @Override

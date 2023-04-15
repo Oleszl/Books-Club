@@ -1,5 +1,7 @@
 package com.excellentbook.excellentbook.controller;
 
+import com.excellentbook.excellentbook.dto.address.AddressDto;
+import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoRequest;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.service.UserService;
@@ -24,11 +26,14 @@ public class UserController {
         return userService.getUser();
     }
 
-    @PutMapping("/{id}")
-    public UserDtoResponse updateUser(@PathVariable Long id, @Valid @RequestBody UserDtoRequest userDtoRequest) {
-        return userService.updateUserById(id, userDtoRequest);
+    @PutMapping("/{userId}")
+    public UserDtoResponse updateUser(@PathVariable("userId") Long id, @Valid @RequestBody UserDetailsDto userDetailsDto) {
+        return userService.updateUserById(id, userDetailsDto);
     }
-
+    @PutMapping("/{userId}/address")
+    public UserDtoResponse updateUserAddress(@PathVariable("userId") Long id, @Valid @RequestBody AddressDto addressDto) {
+        return userService.updateUserAddress(id, addressDto);
+    }
     @PatchMapping(path = "/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,9 +41,9 @@ public class UserController {
         return userService.updateUserPhoto(userId, image);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable("userId") Long id) {
         userService.deleteUserById(id);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table
 @Entity
-@EqualsAndHashCode(exclude = {"roles", "books"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"roles", "desiredBooks"}, callSuper = true)
 public class User extends BaseEntity  {
 
     private String firstName;

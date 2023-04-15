@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -58,6 +59,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorDetails> handleInvalidBuyerException(InvalidBuyerException exception) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(WebClientGenericException.class)
+    public final ResponseEntity<ErrorDetails> handleWebClientGenericException(WebClientGenericException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FAILED_DEPENDENCY);
+    }
+
+    @ExceptionHandler(TimeoutException.class)
+    public final ResponseEntity<ErrorDetails> handleTimeoutException(TimeoutException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.FAILED_DEPENDENCY);
     }
 
     @Override

@@ -56,12 +56,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookPageableDto getAllBooks(int pageNumber, int pageSize) {
+    public BookPageableDto getAllBooks(int pageNumber, int pageSize, String searchType, String searchValue) {
         String endpointPath = "/books";
         String queryPageNumber = "pageNumber";
         String queryPageSize = "pageSize";
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Book> books = bookRepository.findBooksByStatus(BookStatus.AVAILABLE.name().toLowerCase(), pageable);
+        if (searchValue == null){
+            searchValue = "%";
+        }
+        Page<Book> books = bookRepository.findBooksByStatusAndNameLikeIgnoreCase(BookStatus.AVAILABLE.name().toLowerCase(), pageable, searchValue);
         List<BookDtoResponse> booklist = books.getContent().stream()
                 .map(content -> mapper.map(content, BookDtoResponse.class))
                 .toList();

@@ -29,3 +29,8 @@ app:
   jwt-secret: JWTSecretKey
   jwt-expiration-milliseconds: 604800000
   base-path: /api/v1
+
+novaPoshta:
+  server:
+    address: https://api.novaposhta.ua/v2.0/json/
+  apiKey: 9ae4a578c9fb3aac274419d892755f97

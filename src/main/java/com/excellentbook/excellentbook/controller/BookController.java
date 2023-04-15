@@ -4,7 +4,6 @@ import com.excellentbook.excellentbook.constant.AppConstants;
 import com.excellentbook.excellentbook.dto.book.BookDtoRequest;
 import com.excellentbook.excellentbook.dto.book.BookDtoResponse;
 import com.excellentbook.excellentbook.dto.book.BookPageableDto;
-import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
@@ -43,12 +42,15 @@ public class BookController {
     public BookDtoResponse addBookImage(@PathVariable("id") Long bookId, @ModelAttribute("image") MultipartFile image) {
         return bookService.addBookImage(bookId, image);
     }
+
     @GetMapping
     public BookPageableDto getAllBooks(
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize) {
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "searchType", required = false) String searchType,
+            @RequestParam(value = "searchValue", required = false) String searchValue) {
 
-        return bookService.getAllBooks(pageNumber, pageSize);
+        return bookService.getAllBooks(pageNumber, pageSize, searchType, searchValue);
     }
 
     @PostMapping("/{bookId}/users/{userId}")

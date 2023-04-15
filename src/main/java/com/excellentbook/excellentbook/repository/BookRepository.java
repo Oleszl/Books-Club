@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Page<Book> findBooksByStatus(String status, Pageable pageable);
+    Page<Book> findBooksByStatusAndNameLikeIgnoreCase(String status, Pageable pageable, String name);
 
 }

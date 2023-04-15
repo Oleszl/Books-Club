@@ -6,7 +6,7 @@ import com.excellentbook.excellentbook.dto.book.BookPageableDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface BookService {
-    BookPageableDto getAllBooks(int pageNumber, int pageSize);
+    BookPageableDto getAllBooks(int pageNumber, int pageSize, String searchType, String searchValue);
 
     BookDtoResponse getBookById(Long id);
 

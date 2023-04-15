@@ -16,7 +16,7 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"tags", "category", "buyers"}, callSuper = true)
 public class Book extends BaseEntity {
     private String name;
-    @Column(columnDefinition="LONGTEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
     private String authorName;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,7 +34,7 @@ public class Book extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User owner;
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE,

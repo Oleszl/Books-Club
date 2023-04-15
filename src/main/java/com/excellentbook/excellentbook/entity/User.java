@@ -1,8 +1,12 @@
 package com.excellentbook.excellentbook.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -34,5 +38,8 @@ public class User extends BaseEntity  {
     private Set<Book> desiredBooks;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Address address;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    private List<Book> ownBooks;
 
 }

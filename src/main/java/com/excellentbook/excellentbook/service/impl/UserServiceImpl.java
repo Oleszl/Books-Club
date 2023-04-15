@@ -3,9 +3,11 @@ package com.excellentbook.excellentbook.service.impl;
 import com.excellentbook.excellentbook.dto.address.AddressDto;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
+import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.entity.Address;
+import com.excellentbook.excellentbook.entity.Book;
 import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.exception.*;
@@ -21,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.http.entity.ContentType.*;
 
@@ -143,6 +143,32 @@ public class UserServiceImpl implements UserService {
         userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public List<UserBookDetailsDto> getUserBooksByStatus(Long id, String status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        Set<Book> userBooks = user.getDesiredBooks();
+        List<Book> filteredUserBooks = userBooks.stream()
+                .filter(b -> b.getStatus().equals(status))
+                .toList();
+        return filteredUserBooks.stream()
+                .map(b -> mapper.map(b, UserBookDetailsDto.class))
+                .toList();
+    }
+
+    @Override
+    public List<UserBookDetailsDto> getPersonalUserBooksByStatus(Long id, String status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        List<Book> userBooks = user.getOwnBooks();
+        List<Book> filteredUserBooks = userBooks.stream()
+                .filter(b -> b.getStatus().equals(status))
+                .toList();
+        return filteredUserBooks.stream()
+                .map(b -> mapper.map(b, UserBookDetailsDto.class))
+                .toList();
     }
 
 

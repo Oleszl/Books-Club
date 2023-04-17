@@ -2,14 +2,14 @@ package com.excellentbook.excellentbook.service.impl;
 
 import com.excellentbook.excellentbook.dto.book.BookDtoRequest;
 import com.excellentbook.excellentbook.dto.book.BookDtoResponse;
+import com.excellentbook.excellentbook.dto.book.BookOrderDetailsDto;
 import com.excellentbook.excellentbook.dto.book.BookPageableDto;
 import com.excellentbook.excellentbook.dto.tag.TagIdDto;
-import com.excellentbook.excellentbook.entity.Book;
-import com.excellentbook.excellentbook.entity.Category;
-import com.excellentbook.excellentbook.entity.Tag;
-import com.excellentbook.excellentbook.entity.User;
+import com.excellentbook.excellentbook.dto.user.UserDto;
+import com.excellentbook.excellentbook.entity.*;
 import com.excellentbook.excellentbook.enums.BookStatus;
 import com.excellentbook.excellentbook.exception.InvalidBuyerException;
+import com.excellentbook.excellentbook.exception.InvalidImageException;
 import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
 import com.excellentbook.excellentbook.exception.UnavailableBookException;
 import com.excellentbook.excellentbook.repository.BookRepository;
@@ -17,6 +17,8 @@ import com.excellentbook.excellentbook.repository.CategoryRepository;
 import com.excellentbook.excellentbook.repository.TagRepository;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.BookService;
+import com.excellentbook.excellentbook.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -31,12 +33,14 @@ import java.util.*;
 import static org.apache.http.entity.ContentType.*;
 
 @Service
+@Slf4j
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
     private final S3BucketStorageServiceImpl s3BucketStorageService;
+    private final OrderService orderService;
     private final ModelMapper mapper;
     @Value("${application.bucket.name}")
     private String bucketName;
@@ -46,13 +50,16 @@ public class BookServiceImpl implements BookService {
     private String basePath;
 
     public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository
-            , CategoryRepository categoryRepository, TagRepository tagRepository, S3BucketStorageServiceImpl s3BucketStorageService, ModelMapper mapper) {
+            , CategoryRepository categoryRepository, TagRepository tagRepository,
+                           S3BucketStorageServiceImpl s3BucketStorageService,
+                           ModelMapper mapper, OrderService orderService) {
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
         this.s3BucketStorageService = s3BucketStorageService;
         this.mapper = mapper;
+        this.orderService = orderService;
     }
 
     @Override
@@ -61,7 +68,7 @@ public class BookServiceImpl implements BookService {
         String queryPageNumber = "pageNumber";
         String queryPageSize = "pageSize";
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        if (searchValue == null){
+        if (searchValue == null) {
             searchValue = "%";
         }
         Page<Book> books = bookRepository.findBooksByStatusAndNameLikeIgnoreCase(BookStatus.AVAILABLE.name().toLowerCase(), pageable, searchValue);
@@ -107,6 +114,7 @@ public class BookServiceImpl implements BookService {
         bookPageableDto.setTotalElements(books.getTotalElements());
         bookPageableDto.setTotalPages(books.getTotalPages());
 
+        log.info("List of books was formed, total elements: {}", books.getTotalElements());
         return bookPageableDto;
     }
 
@@ -114,6 +122,7 @@ public class BookServiceImpl implements BookService {
     public BookDtoResponse getBookById(Long id) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        log.info("Found book with id: {}", book.getId());
         return mapper.map(book, BookDtoResponse.class);
     }
 
@@ -136,6 +145,8 @@ public class BookServiceImpl implements BookService {
         book.setCategory(category);
         book.setTags(tags);
         book.setStatus(BookStatus.AVAILABLE.name().toLowerCase());
+
+        log.info("Book with id: {} was saved", book.getId());
         return mapper.map(bookRepository.save(book), BookDtoResponse.class);
     }
 
@@ -151,6 +162,7 @@ public class BookServiceImpl implements BookService {
         book.setOwner(null);
         book.setTags(null);
         bookRepository.deleteById(id);
+        log.info("Book with id: {} was deleted", book.getId());
     }
 
     @Override
@@ -159,20 +171,24 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         if (file.isEmpty()) {
-            throw new IllegalStateException("Cannot upload empty file");
+            log.error("Failed to upload empty file");
+            throw new InvalidImageException("Cannot upload empty file");
         }
 
         if (!Arrays.asList(IMAGE_PNG.getMimeType(),
                 IMAGE_BMP.getMimeType(),
                 IMAGE_GIF.getMimeType(),
                 IMAGE_JPEG.getMimeType()).contains(file.getContentType())) {
-            throw new IllegalStateException("FIle uploaded is not an image");
+            log.error("FIle uploaded is not an image, provided file format: {}", file.getContentType());
+            throw new InvalidImageException("FIle uploaded is not an image");
         }
 
         String path = String.format("%s/%s", "user-books", UUID.randomUUID());
         s3BucketStorageService.uploadFile(path, file);
         String fullPath = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, s3RegionName, path);
         book.setPhotoUrl(fullPath);
+
+        log.info("Image was added to book with id: {}", book.getId());
         return mapper.map(bookRepository.save(book), BookDtoResponse.class);
     }
 
@@ -186,12 +202,41 @@ public class BookServiceImpl implements BookService {
         if (!(book.getStatus().equals(BookStatus.AVAILABLE.name().toLowerCase()))) {
             throw new UnavailableBookException(bookId);
         } else {
-            if (book.getOwner().getId().equals(userId)){
+            if (book.getOwner().getId().equals(userId)) {
                 throw new InvalidBuyerException("Buyer cannot claim its own book");
             }
             book.getBuyers().add(user);
             bookRepository.save(book);
         }
+
+        log.info("Book with id: {} was added to user with id: {}", book.getId(), user.getId());
         return mapper.map(book, BookDtoResponse.class);
+    }
+
+    @Override
+    public BookOrderDetailsDto approveBookForParticularUser(Long userId, Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", bookId));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        Order order = null;
+        if ((book.getStatus().equals(BookStatus.UNAVAILABLE.name().toLowerCase()))) {
+            throw new UnavailableBookException(bookId);
+        } else {
+            order = orderService.addDetailsToOrder(book, user);
+            book.setStatus(BookStatus.UNAVAILABLE.name().toLowerCase());
+        }
+        UserDto owner = mapper.map(order.getOwner(), UserDto.class);
+        UserDto buyer = mapper.map(order.getOwner(), UserDto.class);
+
+        BookOrderDetailsDto response = new BookOrderDetailsDto();
+        response.setId(order.getId());
+        response.setBookId(order.getBook().getId());
+        response.setOwner(owner);
+        response.setBuyer(buyer);
+
+        return response;
     }
 }

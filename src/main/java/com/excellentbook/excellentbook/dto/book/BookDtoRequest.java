@@ -3,11 +3,13 @@ package com.excellentbook.excellentbook.dto.book;
 import com.excellentbook.excellentbook.dto.tag.TagIdDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
+@Builder
 public class BookDtoRequest {
     @NotBlank
     private String name;

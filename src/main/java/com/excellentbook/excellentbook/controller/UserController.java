@@ -30,13 +30,14 @@ public class UserController {
 
     @GetMapping("/{userId}/personal-books")
     public List<UserBookDetailsDto> getPersonalUserBooks(@PathVariable Long userId,
-                                                         @RequestParam String status) {
+                                                         @RequestParam(required = false, defaultValue = "available") String status) {
+
         return userService.getPersonalUserBooksByStatus(userId, status);
     }
 
     @GetMapping("/{userId}/books")
     public List<UserBookDetailsDto> getUserBooks(@PathVariable Long userId,
-                                                 @RequestParam String status) {
+                                                 @RequestParam(required = false, defaultValue = "available") String status) {
         return userService.getUserBooksByStatus(userId, status);
     }
 

@@ -26,9 +26,10 @@ public class S3BucketStorageServiceImpl implements S3BucketStorageService {
     public void uploadFile(String path, MultipartFile file) {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType("image/png");
+            metadata.setContentType(file.getContentType());
             metadata.setContentLength(file.getSize());
             amazonS3Client.putObject(bucketName, path, file.getInputStream(), metadata);
+            log.error("Response: AWS S3 Client with params: (bucketName: {},path: {},metadata: {}) was successful", bucketName, path, metadata);
         } catch (AmazonServiceException | IOException e) {
             log.error("Failed to upload the file: {}", e.getMessage());
             throw new AmazonS3UploadException("Failed to upload the file");

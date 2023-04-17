@@ -1,8 +1,6 @@
 package com.excellentbook.excellentbook.service;
 
 import com.excellentbook.excellentbook.dto.address.AddressDto;
-import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
-import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
 import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
@@ -11,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface UserService {
-    RegisterUserDtoResponse createUser(RegisterUserDtoRequest signUpDto);
+
 
     UserDtoResponse getUser();
 
@@ -26,5 +24,6 @@ public interface UserService {
     List<UserBookDetailsDto> getUserBooksByStatus(Long id, String status);
 
     List<UserBookDetailsDto> getPersonalUserBooksByStatus(Long id, String status);
+
 
 }

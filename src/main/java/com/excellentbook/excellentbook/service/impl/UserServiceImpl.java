@@ -1,20 +1,19 @@
 package com.excellentbook.excellentbook.service.impl;
 
 import com.excellentbook.excellentbook.dto.address.AddressDto;
-import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
-import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
 import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
 import com.excellentbook.excellentbook.entity.Address;
 import com.excellentbook.excellentbook.entity.Book;
-import com.excellentbook.excellentbook.entity.Role;
 import com.excellentbook.excellentbook.entity.User;
-import com.excellentbook.excellentbook.exception.*;
-import com.excellentbook.excellentbook.repository.BookRepository;
-import com.excellentbook.excellentbook.repository.RoleRepository;
+import com.excellentbook.excellentbook.exception.EmailExistException;
+import com.excellentbook.excellentbook.exception.InvalidImageException;
+import com.excellentbook.excellentbook.exception.ResourceNotFoundException;
+import com.excellentbook.excellentbook.exception.UserNotFoundException;
 import com.excellentbook.excellentbook.repository.UserRepository;
 import com.excellentbook.excellentbook.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,12 +27,10 @@ import java.util.*;
 import static org.apache.http.entity.ContentType.*;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-
-    private final RoleRepository roleRepository;
-    private final BookRepository bookRepository;
 
     private final ModelMapper mapper;
 
@@ -46,46 +43,23 @@ public class UserServiceImpl implements UserService {
     @Value("${cloud.aws.region.static}")
     private String s3RegionName;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
-                           BookRepository bookRepository, ModelMapper modelMapper,
-                           PasswordEncoder passwordEncoder, S3BucketStorageServiceImpl s3BucketStorageService) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper,
+                           PasswordEncoder passwordEncoder,
+                           S3BucketStorageServiceImpl s3BucketStorageService) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.bookRepository = bookRepository;
         this.mapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.s3BucketStorageService = s3BucketStorageService;
     }
 
-    @Override
-    public RegisterUserDtoResponse createUser(RegisterUserDtoRequest signUpDto) {
-
-        if (userRepository.existsByEmail(signUpDto.getEmail())) {
-            throw new EmailExistException(signUpDto.getEmail());
-        }
-        User user = new User();
-        user.setFirstName(signUpDto.getFirstName());
-        user.setLastName(signUpDto.getLastName());
-        user.setEmail(signUpDto.getEmail());
-        user.setActive(false);
-        user.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-        user.setPhoneNumber(signUpDto.getPhoneNumber());
-
-        Address address = mapper.map(signUpDto.getAddress(), Address.class);
-        user.setAddress(address);
-
-        Role roles = roleRepository.findRoleByName("USER")
-                .orElseThrow(() -> new RoleNotFoundException("USER"));
-        user.setRoles(Collections.singleton(roles));
-
-        return mapper.map(userRepository.save(user), RegisterUserDtoResponse.class);
-    }
 
     @Override
     public UserDtoResponse getUser() {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new UserNotFoundException("User", "email", principal.getName()));
+
+        log.info("Found user with id: {}", user.getId());
         return mapper.map(user, UserDtoResponse.class);
     }
 
@@ -93,6 +67,11 @@ public class UserServiceImpl implements UserService {
     public UserDtoResponse updateUserById(Long id, UserDetailsDto userDtoRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        if (userRepository.existsByEmail(userDtoRequest.getEmail()) &&
+            !Objects.equals(user.getEmail(), userDtoRequest.getEmail())) {
+            throw new EmailExistException(userDtoRequest.getEmail());
+        }
 
         user.setFirstName(userDtoRequest.getFirstName());
         user.setLastName(userDtoRequest.getLastName());
@@ -102,6 +81,7 @@ public class UserServiceImpl implements UserService {
         if (userDtoRequest.getPassword() != null)
             user.setPassword(passwordEncoder.encode(userDtoRequest.getPassword()));
 
+        log.info("User with id: {} was updated", user.getId());
         return mapper.map(userRepository.save(user), UserDtoResponse.class);
     }
 
@@ -111,6 +91,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
         if (file.isEmpty()) {
+            log.error("Failed to upload empty file");
             throw new InvalidImageException("Image is not provided");
         }
 
@@ -118,6 +99,7 @@ public class UserServiceImpl implements UserService {
                 IMAGE_BMP.getMimeType(),
                 IMAGE_GIF.getMimeType(),
                 IMAGE_JPEG.getMimeType()).contains(file.getContentType())) {
+            log.error("FIle uploaded is not an image, provided file format: {}", file.getContentType());
             throw new InvalidImageException("File uploaded is not an image");
         }
 
@@ -125,6 +107,8 @@ public class UserServiceImpl implements UserService {
         s3BucketStorageService.uploadFile(path, file);
         String fullPath = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, s3RegionName, path);
         user.setPhotoUrl(fullPath);
+
+        log.info("Image was added to user with id: {}", user.getId());
         return mapper.map(userRepository.save(user), UserDtoResponse.class);
     }
 
@@ -135,14 +119,17 @@ public class UserServiceImpl implements UserService {
 
         Address address = mapper.map(addressDto, Address.class);
         user.setAddress(address);
+
+        log.info("Address details was updated for user with id: {}", user.getId());
         return mapper.map(user, UserDtoResponse.class);
     }
 
     @Override
     public void deleteUserById(Long id) {
-        userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.deleteById(id);
+        log.info("User with id: {} was deleted", user.getId());
     }
 
     @Override
@@ -153,6 +140,8 @@ public class UserServiceImpl implements UserService {
         List<Book> filteredUserBooks = userBooks.stream()
                 .filter(b -> b.getStatus().equals(status))
                 .toList();
+
+        log.info("List of all desirable books was formed for user with id: {}", user.getId());
         return filteredUserBooks.stream()
                 .map(b -> mapper.map(b, UserBookDetailsDto.class))
                 .toList();
@@ -166,6 +155,8 @@ public class UserServiceImpl implements UserService {
         List<Book> filteredUserBooks = userBooks.stream()
                 .filter(b -> b.getStatus().equals(status))
                 .toList();
+
+        log.info("List of all personal books was formed for user with id: {}", user.getId());
         return filteredUserBooks.stream()
                 .map(b -> mapper.map(b, UserBookDetailsDto.class))
                 .toList();

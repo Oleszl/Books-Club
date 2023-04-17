@@ -73,6 +73,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.FAILED_DEPENDENCY);
     }
 
+    @ExceptionHandler(InvalidJWTTokenException.class)
+    public final ResponseEntity<ErrorDetails> handleInvalidJWTTokenException(InvalidJWTTokenException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidPasswordException.class)
+    public final ResponseEntity<ErrorDetails> handleInvalidPasswordException(InvalidPasswordException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CustomUsernameNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> handleCustomUsernameNotFoundException(CustomUsernameNotFoundException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();

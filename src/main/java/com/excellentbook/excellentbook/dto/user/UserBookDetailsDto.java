@@ -19,4 +19,5 @@ public class UserBookDetailsDto {
     private String photoUrl;
     private String status;
     private Set<TagDto> tags;
+    private Set<UserDto> buyers;
 }

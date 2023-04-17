@@ -5,11 +5,17 @@ import com.excellentbook.excellentbook.dto.tag.TagDto;
 import com.excellentbook.excellentbook.dto.user.UserDto;
 import com.excellentbook.excellentbook.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookDtoResponse {
     private Long id;
     private String name;

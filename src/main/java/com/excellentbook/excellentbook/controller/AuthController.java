@@ -5,46 +5,37 @@ import com.excellentbook.excellentbook.dto.auth.LoginDto;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoRequest;
 import com.excellentbook.excellentbook.dto.auth.RegisterUserDtoResponse;
 import com.excellentbook.excellentbook.security.jwt.JwtTokenProvider;
-import com.excellentbook.excellentbook.service.UserService;
+import com.excellentbook.excellentbook.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
-    private final UserService userService;
-    @Autowired
+    private final AuthService authService;
 
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtTokenProvider tokenProvider;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public RegisterUserDtoResponse registerUser(@Valid @RequestBody RegisterUserDtoRequest registerUserDtoRequest) {
-        return userService.createUser(registerUserDtoRequest);
+        return authService.registerUser(registerUserDtoRequest);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<JwtAuthResponse> authenticate(@Valid @RequestBody LoginDto loginDto) {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(),
-                        loginDto.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = authService.userAuthentication(loginDto);
 
         String token = tokenProvider.generateToken(authentication);
         return ResponseEntity.ok(new JwtAuthResponse(token));

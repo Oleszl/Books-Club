@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/books")
-@CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 
     private final BookService bookService;
@@ -45,7 +44,10 @@ public class BookController {
     }
 
     @GetMapping
-    public BookPageableDto getAllBooks(@RequestParam(value = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize, @RequestParam(value = "searchType", required = false) String searchType, @RequestParam(value = "searchValue", required = false) String searchValue) {
+    public BookPageableDto getAllBooks(@RequestParam(value = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+                                       @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+                                       @RequestParam(value = "searchType", required = false) String searchType,
+                                       @RequestParam(value = "searchValue", required = false) String searchValue) {
 
         return bookService.getAllBooks(pageNumber, pageSize, searchType, searchValue);
     }

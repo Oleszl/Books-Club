@@ -98,8 +98,7 @@
                     </excludes>
                 </configuration>
             </plugin>
-
         </plugins>
+        <finalName>excellent-book</finalName>
     </build>
-
 </project>

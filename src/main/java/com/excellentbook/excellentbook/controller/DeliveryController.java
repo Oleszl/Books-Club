@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/delivery")
-@CrossOrigin(origins = "http://localhost:3000")
 public class DeliveryController {
     private DeliveryService deliveryService;
 

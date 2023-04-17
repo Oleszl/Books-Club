@@ -23,8 +23,8 @@ cloud:
     region:
       static: eu-central-1
     credentials:
-      accessKey: AKIAWJF7EP7ZE6AAIG5Z
-      secretKey: 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
+      accessKey:
+      secretKey:
 app:
   jwt-secret: JWTSecretKey
   jwt-expiration-milliseconds: 604800000
@@ -33,4 +33,4 @@ app:
 novaPoshta:
   server:
     address: https://api.novaposhta.ua/v2.0/json/
-  apiKey: 9ae4a578c9fb3aac274419d892755f97
+  apiKey:

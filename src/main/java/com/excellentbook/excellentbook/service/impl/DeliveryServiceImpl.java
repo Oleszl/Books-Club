@@ -52,7 +52,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                     .body(Mono.just(requestBody), NovaPoshtaDtoRequest.class)
                     .retrieve()
                     .bodyToMono(NovaPoshtaDtoResponse.class)
-                    .timeout(Duration.ofSeconds(5))
+                    .timeout(Duration.ofSeconds(6))
                     .onErrorMap(TimeoutException.class, e -> new TimeoutException("Error occurred in 3rd party API"))
                     .block();
             log.info("Response: Nova Poshta API with param: queryParam(city: {}) was successful", city);

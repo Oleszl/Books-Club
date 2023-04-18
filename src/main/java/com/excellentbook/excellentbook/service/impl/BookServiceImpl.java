@@ -49,8 +49,8 @@ public class BookServiceImpl implements BookService {
     @Value("${app.base-path}")
     private String basePath;
 
-    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository
-            , CategoryRepository categoryRepository, TagRepository tagRepository,
+    public BookServiceImpl(BookRepository bookRepository, UserRepository userRepository,
+                           CategoryRepository categoryRepository, TagRepository tagRepository,
                            S3BucketStorageServiceImpl s3BucketStorageService,
                            ModelMapper mapper, OrderService orderService) {
         this.bookRepository = bookRepository;
@@ -63,21 +63,28 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookPageableDto getAllBooks(int pageNumber, int pageSize, String searchType, String searchValue) {
-        String endpointPath = "/books";
-        String queryPageNumber = "pageNumber";
-        String queryPageSize = "pageSize";
+    public BookPageableDto getAllBooks(int pageNumber, int pageSize, String searchValue) {
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        String valueToSearch;
         if (searchValue == null) {
-            valueToSearch = "%";
-        } else {
-            valueToSearch = "%" + searchValue + "%";
+            searchValue = "";
         }
-        Page<Book> books = bookRepository.findBooksByStatusAndNameLikeIgnoreCase(BookStatus.AVAILABLE.name().toLowerCase(), pageable, valueToSearch);
+
+        Page<Book> books = bookRepository.findBooksByStatusAndNameIgnoreCaseContaining(
+                BookStatus.AVAILABLE.name().toLowerCase(), pageable, searchValue);
+
         List<BookDtoResponse> booklist = books.getContent().stream()
                 .map(content -> mapper.map(content, BookDtoResponse.class))
                 .toList();
+
+        return formPaginationInfo(books, booklist, pageSize);
+    }
+
+    private BookPageableDto formPaginationInfo(Page<Book> books, List<BookDtoResponse> booklist, int pageSize) {
+        final String endpointPath = "/books";
+        final String queryPageNumber = "pageNumber";
+        final String queryPageSize = "pageSize";
+
         BookPageableDto bookPageableDto = new BookPageableDto();
 
         if (books.getNumber() == 0) {
@@ -171,7 +178,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDtoResponse addBookImage(Long id, MultipartFile file) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
 
         if (file.isEmpty()) {
             log.error("Failed to upload empty file");
@@ -183,7 +190,7 @@ public class BookServiceImpl implements BookService {
                 IMAGE_GIF.getMimeType(),
                 IMAGE_JPEG.getMimeType()).contains(file.getContentType())) {
             log.error("FIle uploaded is not an image, provided file format: {}", file.getContentType());
-            throw new InvalidImageException("FIle uploaded is not an image");
+            throw new InvalidImageException("Uploaded fIle is not an image");
         }
 
         String path = String.format("%s/%s", "user-books", UUID.randomUUID());
@@ -224,7 +231,7 @@ public class BookServiceImpl implements BookService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        Order order = null;
+        Order order;
         if ((book.getStatus().equals(BookStatus.UNAVAILABLE.name().toLowerCase()))) {
             throw new UnavailableBookException(bookId);
         } else {

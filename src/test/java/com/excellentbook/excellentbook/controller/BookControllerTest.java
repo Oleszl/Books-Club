@@ -47,7 +47,6 @@ public class BookControllerTest {
     void getAllBooksTest() throws Exception {
         int pageNumber = 0;
         int pageSize = 10;
-        String searchType = "name";
         String searchValue = "test";
         mockMvc.perform(get(bookLink)
                         .queryParam("pageNumber", "0")
@@ -56,7 +55,7 @@ public class BookControllerTest {
                         .queryParam("searchValue", "test")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(bookService).getAllBooks(pageNumber, pageSize, searchType, searchValue);
+        verify(bookService).getAllBooks(pageNumber, pageSize, searchValue);
     }
 
     @Test

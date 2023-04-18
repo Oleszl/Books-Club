@@ -78,13 +78,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(InvalidPasswordException.class)
     public final ResponseEntity<ErrorDetails> handleInvalidPasswordException(InvalidPasswordException e) {
         ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(CustomUsernameNotFoundException.class)
     public final ResponseEntity<ErrorDetails> handleCustomUsernameNotFoundException(CustomUsernameNotFoundException e) {
+        ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnavailableBookException.class)
+    public final ResponseEntity<ErrorDetails> handleUnavailableBookException(UnavailableBookException e) {
         ErrorDetails exceptionResponse = new ErrorDetails(new Date(), e.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }

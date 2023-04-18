@@ -22,34 +22,34 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping
-    public BookDtoResponse saveBook(@Valid @RequestBody BookDtoRequest bookDtoRequest) {
-        return bookService.saveBook(bookDtoRequest);
-    }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{bookId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBook(@PathVariable Long id) {
+    public void deleteBook(@PathVariable("bookId") Long id) {
         bookService.deleteBookById(id);
     }
 
-    @GetMapping("/{id}")
-    public BookDtoResponse getBook(@PathVariable Long id) {
+    @GetMapping("/{bookId}")
+    public BookDtoResponse getBook(@PathVariable("bookId") Long id) {
         return bookService.getBookById(id);
-    }
-
-    @PatchMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BookDtoResponse addBookImage(@PathVariable("id") Long bookId, @ModelAttribute("image") MultipartFile image) {
-        return bookService.addBookImage(bookId, image);
     }
 
     @GetMapping
     public BookPageableDto getAllBooks(@RequestParam(value = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
                                        @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-                                       @RequestParam(value = "searchType", required = false) String searchType,
                                        @RequestParam(value = "searchValue", required = false) String searchValue) {
 
-        return bookService.getAllBooks(pageNumber, pageSize, searchType, searchValue);
+        return bookService.getAllBooks(pageNumber, pageSize, searchValue);
+    }
+
+    @PatchMapping(path = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public BookDtoResponse addBookImage(@PathVariable("bookId") Long bookId, @ModelAttribute("image") MultipartFile image) {
+        return bookService.addBookImage(bookId, image);
+    }
+
+    @PostMapping
+    public BookDtoResponse saveBook(@Valid @RequestBody BookDtoRequest bookDtoRequest) {
+        return bookService.saveBook(bookDtoRequest);
     }
 
     @PostMapping("/{bookId}/users/{userId}")

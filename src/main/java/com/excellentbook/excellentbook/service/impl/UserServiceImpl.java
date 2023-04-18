@@ -1,11 +1,10 @@
 package com.excellentbook.excellentbook.service.impl;
 
 import com.excellentbook.excellentbook.dto.address.AddressDto;
-import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
-import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
-import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
+import com.excellentbook.excellentbook.dto.user.*;
 import com.excellentbook.excellentbook.entity.Address;
 import com.excellentbook.excellentbook.entity.Book;
+import com.excellentbook.excellentbook.entity.Order;
 import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.exception.EmailExistException;
 import com.excellentbook.excellentbook.exception.InvalidImageException;
@@ -162,5 +161,33 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    @Override
+    public Set<UserOrderDetailsDto> getBuyerOrderDetails(Long buyerId) {
+        User user = userRepository.findById(buyerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", buyerId));
+
+        return mapOrdersToDto(user.getOrders());
+
+    }
+
+    private Set<UserOrderDetailsDto> mapOrdersToDto(Set<Order> orders) {
+        Set<UserOrderDetailsDto> userOrderDetails = new HashSet<>();
+
+        orders.forEach(order -> {
+            UserOrderDetailsDto userOrderDetail = new UserOrderDetailsDto();
+
+            userOrderDetail.setId(order.getBook().getId());
+            userOrderDetail.setName(order.getBook().getName());
+            userOrderDetail.setStatus(order.getBook().getStatus());
+            userOrderDetail.setDescription(order.getBook().getDescription());
+            userOrderDetail.setAuthorName(order.getBook().getAuthorName());
+            userOrderDetail.setPhotoUrl(order.getBook().getPhotoUrl());
+            userOrderDetail.setBuyer(mapper.map(order.getBuyer(), UserDto.class));
+            userOrderDetail.setOwner(mapper.map(order.getOwner(), UserDto.class));
+            userOrderDetails.add(userOrderDetail);
+
+        });
+        return userOrderDetails;
+    }
 
 }

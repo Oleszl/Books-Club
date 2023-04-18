@@ -4,6 +4,7 @@ import com.excellentbook.excellentbook.dto.address.AddressDto;
 import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
+import com.excellentbook.excellentbook.dto.user.UserOrderDetailsDto;
 import com.excellentbook.excellentbook.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -25,6 +27,10 @@ public class UserController {
     @GetMapping
     public UserDtoResponse getUser() {
         return userService.getUser();
+    }
+    @GetMapping("/{userId}/orders")
+    public Set<UserOrderDetailsDto> getBuyerOrderDetails(@PathVariable("userId") Long id) {
+        return userService.getBuyerOrderDetails(id);
     }
 
     @GetMapping("/{userId}/personal-books")

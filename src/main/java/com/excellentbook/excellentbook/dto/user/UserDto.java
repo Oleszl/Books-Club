@@ -12,7 +12,7 @@ public class UserDto {
     @JsonProperty("last_name")
     private String lastName;
     private String email;
-    @JsonProperty("phone_Number")
+    @JsonProperty("phone_number")
     private String phoneNumber;
     private AddressDto address;
 }

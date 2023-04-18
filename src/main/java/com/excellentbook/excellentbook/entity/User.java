@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Table
 @Entity
-@EqualsAndHashCode(exclude = {"roles", "desiredBooks"}, callSuper = true)
+@EqualsAndHashCode(exclude = {"roles", "desiredBooks", "orders", "ownBooks"}, callSuper = true)
 @SuperBuilder
 public class User extends BaseEntity {
 
@@ -43,5 +43,7 @@ public class User extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Book> ownBooks;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buyer")
+    private Set<Order> orders;
 
 }

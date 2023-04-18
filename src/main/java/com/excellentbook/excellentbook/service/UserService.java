@@ -4,12 +4,13 @@ import com.excellentbook.excellentbook.dto.address.AddressDto;
 import com.excellentbook.excellentbook.dto.user.UserBookDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDetailsDto;
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
+import com.excellentbook.excellentbook.dto.user.UserOrderDetailsDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserService {
-
 
     UserDtoResponse getUser();
 
@@ -25,5 +26,6 @@ public interface UserService {
 
     List<UserBookDetailsDto> getPersonalUserBooksByStatus(Long id, String status);
 
+    Set<UserOrderDetailsDto> getBuyerOrderDetails(Long id);
 
 }

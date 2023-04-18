@@ -20,13 +20,13 @@ import static org.mockito.Mockito.when;
 public class CategoryServiceImplTest {
 
     @Mock
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Mock
-    ModelMapper mapper;
+    private ModelMapper mapper;
 
     @InjectMocks
-    CategoryServiceImpl categoryService;
+    private CategoryServiceImpl categoryService;
 
     @Test
     void getAllCategoryTest() {

@@ -1,11 +1,10 @@
 package com.excellentbook.excellentbook;
 
-import com.excellentbook.excellentbook.dto.book.BookDtoRequest;
-import com.excellentbook.excellentbook.dto.book.BookDtoResponse;
-import com.excellentbook.excellentbook.dto.tag.TagIdDto;
-import com.excellentbook.excellentbook.entity.*;
+import com.excellentbook.excellentbook.entity.Book;
+import com.excellentbook.excellentbook.entity.Category;
+import com.excellentbook.excellentbook.entity.Tag;
+import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.enums.BookStatus;
-import org.junit.jupiter.api.Tags;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,6 +28,7 @@ public class ModelUtils {
                 .buyers(buyers)
                 .build();
     }
+
     public static List<Category> getCategories() {
         Category category1 = Category.builder()
                 .id(1L)
@@ -48,36 +48,16 @@ public class ModelUtils {
                 .email("test@gmail.com")
                 .build();
     }
-    public static Category getCategory() {
-        return Category.builder()
-                .name("test")
+
+    public static List<Tag> getTags() {
+        Tag tag1 = Tag.builder()
+                .name("tag1")
                 .build();
+        Tag tag2 = Tag.builder()
+                .name("tag2")
+                .build();
+
+        return List.of(tag1, tag2);
     }
 
-    public static BookDtoRequest getBookDtoRequest() {
-        Set<TagIdDto> tags = new HashSet<>();
-        tags.add(new TagIdDto(1L));
-        return BookDtoRequest.builder()
-                .ownerId(1L)
-                .categoryId(1L)
-                .name("Sample Title")
-                .authorName("Sample Author")
-                .description("Sample Description")
-                .tags(tags)
-                .build();
-    }
-    public static BookDtoResponse getBookDtoResponse(){
-        return BookDtoResponse.builder()
-                .name("Sample Title")
-                .authorName("Sample Author")
-                .description("Sample Description")
-                .build();
-    }
-
-    public static Tag getTag() {
-        Tag tag = new Tag();
-        tag.setId(1L);
-
-        return tag;
-    }
 }

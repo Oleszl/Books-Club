@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -24,14 +25,18 @@ public class CategoryControllerTest {
 
     @Mock
     private CategoryService categoryService;
+
     @BeforeEach
     void setup() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(categoryController)
                 .build();
     }
+
     @Test
     void getAllCategoryTest() throws Exception {
-        mockMvc.perform(get(categoryLink)).andExpect(status().isOk());
+        mockMvc.perform(get(categoryLink)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(categoryService).getAllCategory();
     }
 }

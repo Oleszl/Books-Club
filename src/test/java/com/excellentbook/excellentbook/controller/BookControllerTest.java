@@ -1,12 +1,14 @@
 package com.excellentbook.excellentbook.controller;
 
 import com.excellentbook.excellentbook.service.BookService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,7 +37,9 @@ public class BookControllerTest {
     @Test
     void getBookByIdTest() throws Exception {
         Long bookId = 1L;
-        mockMvc.perform(get(bookLink + "/" + bookId)).andExpect(status().isOk());
+        mockMvc.perform(get(bookLink + "/" + bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(bookService).getBookById(1L);
     }
 
@@ -46,17 +50,20 @@ public class BookControllerTest {
         String searchType = "name";
         String searchValue = "test";
         mockMvc.perform(get(bookLink)
-                .queryParam("pageNumber", "0")
-                .queryParam("pageSize", "10")
-                .queryParam("searchType", "name")
-                .queryParam("searchValue", "test")
-        ).andExpect(status().isOk());
+                        .queryParam("pageNumber", "0")
+                        .queryParam("pageSize", "10")
+                        .queryParam("searchType", "name")
+                        .queryParam("searchValue", "test")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         verify(bookService).getAllBooks(pageNumber, pageSize, searchType, searchValue);
     }
+
     @Test
     void deleteBookByIdTest() throws Exception {
         Long bookId = 1L;
-        mockMvc.perform(delete(bookLink + "/" + bookId)).andExpect(status().isNoContent());
+        mockMvc.perform(delete(bookLink + "/" + bookId))
+                .andExpect(status().isNoContent());
         verify(bookService).deleteBookById(bookId);
     }
 

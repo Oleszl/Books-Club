@@ -68,10 +68,13 @@ public class BookServiceImpl implements BookService {
         String queryPageNumber = "pageNumber";
         String queryPageSize = "pageSize";
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        String valueToSearch;
         if (searchValue == null) {
-            searchValue = "%";
+            valueToSearch = "%";
+        } else {
+            valueToSearch = "%" + searchValue + "%";
         }
-        Page<Book> books = bookRepository.findBooksByStatusAndNameLikeIgnoreCase(BookStatus.AVAILABLE.name().toLowerCase(), pageable, searchValue);
+        Page<Book> books = bookRepository.findBooksByStatusAndNameLikeIgnoreCase(BookStatus.AVAILABLE.name().toLowerCase(), pageable, valueToSearch);
         List<BookDtoResponse> booklist = books.getContent().stream()
                 .map(content -> mapper.map(content, BookDtoResponse.class))
                 .toList();
@@ -227,6 +230,7 @@ public class BookServiceImpl implements BookService {
         } else {
             order = orderService.addDetailsToOrder(book, user);
             book.setStatus(BookStatus.UNAVAILABLE.name().toLowerCase());
+            bookRepository.save(book);
         }
         UserDto owner = mapper.map(order.getOwner(), UserDto.class);
         UserDto buyer = mapper.map(order.getOwner(), UserDto.class);

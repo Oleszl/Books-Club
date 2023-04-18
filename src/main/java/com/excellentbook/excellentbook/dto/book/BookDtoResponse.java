@@ -3,7 +3,6 @@ package com.excellentbook.excellentbook.dto.book;
 import com.excellentbook.excellentbook.dto.category.CategoryDto;
 import com.excellentbook.excellentbook.dto.tag.TagDto;
 import com.excellentbook.excellentbook.dto.user.UserDto;
-import com.excellentbook.excellentbook.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,6 @@
 package com.excellentbook.excellentbook.aspect;
 
 import com.excellentbook.excellentbook.dto.user.UserDtoResponse;
-import com.excellentbook.excellentbook.entity.User;
 import com.excellentbook.excellentbook.exception.InvalidJWTTokenException;
 import com.excellentbook.excellentbook.service.UserService;
 import lombok.extern.slf4j.Slf4j;

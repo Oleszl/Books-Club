@@ -22,7 +22,4 @@ public class BookDtoRequest {
     private Set<TagIdDto> tags;
     @JsonProperty("owner_id")
     private Long ownerId;
-//    @Valid
-//    @NotEmpty
-//    private Set<User> users;
 }

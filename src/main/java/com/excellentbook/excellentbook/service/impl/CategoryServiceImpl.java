@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getAllCategory() {
         List<Category> categories = categoryRepository.findAll();
 
-        log.info("List of categories was formed, all available categories: {}", categories);
+        log.info("List of all available categories was formed");
         return categories.stream()
                 .map(category -> mapper.map(category, CategoryDto.class))
                 .toList();

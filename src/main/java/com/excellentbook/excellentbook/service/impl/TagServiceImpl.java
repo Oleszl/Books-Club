@@ -26,7 +26,7 @@ public class TagServiceImpl implements TagService {
     public List<TagDto> getAllTags() {
         List<Tag> tags = tagRepository.findAll();
 
-        log.info("List of tags was formed, all available tags: {}", tags);
+        log.info("List of all available tags was formed");
         return tags.stream()
                 .map(tag -> mapper.map(tag, TagDto.class))
                 .toList();

@@ -37,19 +37,19 @@ public class BookController {
     @GetMapping
     public BookPageableDto getAllBooks(@RequestParam(value = "pageNumber", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
                                        @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-                                       @RequestParam(value = "searchValue", required = false) String searchValue) {
+                                       @RequestParam(value = "searchValue", defaultValue = "", required = false) String searchValue) {
 
         return bookService.getAllBooks(pageNumber, pageSize, searchValue);
-    }
-
-    @PatchMapping(path = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public BookDtoResponse addBookImage(@PathVariable("bookId") Long bookId, @ModelAttribute("image") MultipartFile image) {
-        return bookService.addBookImage(bookId, image);
     }
 
     @PostMapping
     public BookDtoResponse saveBook(@Valid @RequestBody BookDtoRequest bookDtoRequest) {
         return bookService.saveBook(bookDtoRequest);
+    }
+
+    @PatchMapping(path = "/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public BookDtoResponse addBookImage(@PathVariable("bookId") Long bookId, @ModelAttribute("image") MultipartFile image) {
+        return bookService.addBookImage(bookId, image);
     }
 
     @PostMapping("/{bookId}/users/{userId}")

@@ -66,9 +66,6 @@ public class BookServiceImpl implements BookService {
     public BookPageableDto getAllBooks(int pageNumber, int pageSize, String searchValue) {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        if (searchValue == null) {
-            searchValue = "";
-        }
 
         Page<Book> books = bookRepository.findBooksByStatusAndNameIgnoreCaseContaining(
                 BookStatus.AVAILABLE.name().toLowerCase(), pageable, searchValue);
@@ -81,9 +78,6 @@ public class BookServiceImpl implements BookService {
     }
 
     private BookPageableDto formPaginationInfo(Page<Book> books, List<BookDtoResponse> booklist, int pageSize) {
-        final String endpointPath = "/books";
-        final String queryPageNumber = "pageNumber";
-        final String queryPageSize = "pageSize";
 
         BookPageableDto bookPageableDto = new BookPageableDto();
 
@@ -91,31 +85,19 @@ public class BookServiceImpl implements BookService {
             bookPageableDto.setPrev(null);
             if (books.getTotalElements() > pageSize) {
                 int bookNumber = books.getNumber() + 1;
-                bookPageableDto.setNext(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
-                        .queryParam(queryPageNumber, bookNumber)
-                        .queryParam(queryPageSize, pageSize)
-                        .toUriString());
+                bookPageableDto.setNext(buildUrlAddress(bookNumber, pageSize));
             } else {
                 bookPageableDto.setNext(null);
             }
         } else if (books.isLast()) {
             int bookNumber = books.getNumber() - 1;
-            bookPageableDto.setPrev(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
-                    .queryParam(queryPageNumber, bookNumber)
-                    .queryParam(queryPageSize, pageSize)
-                    .toUriString());
+            bookPageableDto.setPrev(buildUrlAddress(bookNumber, pageSize));
             bookPageableDto.setNext(null);
         } else {
             int prevBookNumber = books.getNumber() - 1;
             int nextBookNumber = books.getNumber() + 1;
-            bookPageableDto.setPrev(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
-                    .queryParam(queryPageNumber, prevBookNumber)
-                    .queryParam(queryPageSize, pageSize)
-                    .toUriString());
-            bookPageableDto.setNext(ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
-                    .queryParam(queryPageNumber, nextBookNumber)
-                    .queryParam(queryPageSize, pageSize)
-                    .toUriString());
+            bookPageableDto.setPrev(buildUrlAddress(prevBookNumber, pageSize));
+            bookPageableDto.setNext(buildUrlAddress(nextBookNumber, pageSize));
         }
 
         bookPageableDto.setContent(booklist);
@@ -126,6 +108,17 @@ public class BookServiceImpl implements BookService {
 
         log.info("List of books was formed, total elements: {}", books.getTotalElements());
         return bookPageableDto;
+    }
+
+    private String buildUrlAddress(int bookNumber, int pageSize) {
+        final String endpointPath = "/books";
+        final String queryPageNumber = "pageNumber";
+        final String queryPageSize = "pageSize";
+
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path(basePath + endpointPath)
+                .queryParam(queryPageNumber, bookNumber)
+                .queryParam(queryPageSize, pageSize)
+                .toUriString();
     }
 
     @Override
@@ -158,11 +151,6 @@ public class BookServiceImpl implements BookService {
 
         log.info("Book with id: {} was saved", book.getId());
         return mapper.map(bookRepository.save(book), BookDtoResponse.class);
-    }
-
-    @Override
-    public BookDtoResponse updateBookById(Long id, BookDtoRequest bookDtoRequest) {
-        return null;
     }
 
     @Override
@@ -249,5 +237,9 @@ public class BookServiceImpl implements BookService {
         response.setBuyer(buyer);
 
         return response;
+    }
+    @Override
+    public BookDtoResponse updateBookById(Long id, BookDtoRequest bookDtoRequest) {
+        return null;
     }
 }

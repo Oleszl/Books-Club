@@ -52,10 +52,6 @@ public class SecurityConfig {
                         "/api/v1/books/{bookId}/users/{userId}",
                         "/api/v1/books/{bookId}/users/{userId}/approve")
                 .authenticated()
-                .requestMatchers(HttpMethod.PATCH,
-                        "/api/v1/books/{bookId}",
-                        "/api/v1/users/{userId}")
-                .authenticated()
                 .requestMatchers(HttpMethod.PUT,
                         "/api/v1/users/{userId}",
                         "/api/v1/users/{userId}/address")

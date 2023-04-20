@@ -82,12 +82,12 @@ public class BookServiceImplTest {
 
     @Test
     void addBookImageThrowResourceNotFoundExceptionTest() {
-        Long id = 1L;
+        Long id = 2L;
         MultipartFile file = new MockMultipartFile("file", "file.png", "image/png", new byte[]{1, 2, 3});
         when(bookRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> bookService.addBookImage(id, file)).isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("User not found with id: 1");
+                .hasMessage("Book not found with id: 2");
     }
 
     @Test
